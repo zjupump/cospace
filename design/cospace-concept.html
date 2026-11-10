@@ -1,0 +1,60 @@
+<div id="cospace-concept" aria-label="CoSpace 产品概念 · 示例数据">
+<style>
+#cospace-concept{--cs-bg:light-dark(#fff,#191c23);--cs-soft:light-dark(#f5f6f8,#222630);--cs-text:light-dark(#253044,#e7ecf5);--cs-dim:light-dark(#677084,#a8b2c3);--cs-line:light-dark(#e3e7ef,#373d49);--cs-accent:light-dark(#495ac5,#a6b2ff);--cs-tint:light-dark(#eef1ff,#2d3453);--cs-warn:light-dark(#93621d,#edc081);font:14px/1.65 system-ui,"Segoe UI","Microsoft YaHei",sans-serif;color:var(--cs-text)}
+#cospace-concept *{box-sizing:border-box}#cospace-concept .shell{background:var(--cs-bg);border:1px solid var(--cs-line);border-radius:14px;overflow:hidden}#cospace-concept header{padding:18px 100px 18px 22px;border-bottom:1px solid var(--cs-line);display:flex;gap:16px;align-items:center;flex-wrap:wrap}#cospace-concept .brand{font-size:21px;font-weight:650;letter-spacing:-.8px}#cospace-concept .small{font-size:12px;color:var(--cs-dim)}#cospace-concept .layout{display:grid;grid-template-columns:145px minmax(0,1fr)}#cospace-concept nav{background:var(--cs-soft);padding:20px 10px;border-right:1px solid var(--cs-line)}#cospace-concept button{font:inherit;color:inherit;cursor:pointer}#cospace-concept button:focus-visible{outline:2px solid var(--cs-accent);outline-offset:3px}#cospace-concept nav button{display:block;border:0;width:100%;text-align:left;background:transparent;padding:10px 12px;border-radius:7px;margin-bottom:6px}#cospace-concept nav button[aria-pressed=true]{color:var(--cs-accent);background:var(--cs-bg);font-weight:600}#cospace-concept main{padding:24px;min-width:0}#cospace-concept h2{font-size:23px;line-height:1.4;font-weight:600;margin:0 0 8px}#cospace-concept h3{font-size:15px;font-weight:600;margin:0 0 10px}#cospace-concept p{margin:0}#cospace-concept .goal{padding:17px;background:var(--cs-tint);border-radius:9px;margin:22px 0}#cospace-concept .columns{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:22px;margin-top:22px}#cospace-concept .task{display:block;width:100%;border:1px solid var(--cs-line);border-radius:9px;text-align:left;background:var(--cs-bg);padding:14px;margin-bottom:10px}#cospace-concept .task[aria-pressed=true]{border-color:var(--cs-accent);background:var(--cs-tint)}#cospace-concept .task strong{display:block;margin:5px 0;font-weight:550}#cospace-concept .tag{font-size:12px;color:var(--cs-accent)}#cospace-concept .warn{color:var(--cs-warn)}#cospace-concept aside{border:1px solid var(--cs-line);border-radius:10px;padding:17px;overflow-wrap:anywhere}#cospace-concept .field{margin:14px 0}#cospace-concept .label{font-size:12px;color:var(--cs-dim);margin-bottom:4px}#cospace-concept .action{width:100%;border:0;background:var(--cs-accent);color:var(--cs-bg);padding:10px;border-radius:7px}#cospace-concept .note{padding:12px;background:var(--cs-soft);border-radius:7px;margin-top:12px}#cospace-concept .project{border-top:1px solid var(--cs-line);margin-top:22px;padding-top:18px}#cospace-concept .row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}#cospace-concept .track{height:5px;background:var(--cs-soft);margin:12px 0;border-radius:4px;overflow:hidden}#cospace-concept .fill{width:50%;height:100%;background:var(--cs-accent)}#cospace-concept .resource{padding:20px 0;border-bottom:1px solid var(--cs-line)}#cospace-concept .resource p{margin:6px 0}#cospace-concept [hidden]{display:none!important}
+@media(max-width:850px){#cospace-concept .columns{grid-template-columns:1fr}}@media(max-width:520px){#cospace-concept .layout{grid-template-columns:1fr}#cospace-concept nav{display:flex;gap:4px;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--cs-line);padding:8px}#cospace-concept nav button{width:auto;margin:0;padding:9px}#cospace-concept main{padding:18px 14px}}@media(pointer:coarse){#cospace-concept button{min-height:44px}}
+</style>
+<div class="shell">
+<header><span class="brand">CoSpace<span style="color:var(--cs-accent)">.</span></span><span class="small">产品小队 · 概念示意 / 示例数据</span></header>
+<div class="layout">
+<nav aria-label="工作区导航"><button type="button" data-page="team" aria-pressed="true">团队总览</button><button type="button" data-page="mine" aria-pressed="false">我的工作</button><button type="button" data-page="project" aria-pressed="false">项目</button><button type="button" data-page="assets" aria-pressed="false">资产中心</button></nav>
+<main id="cs-main"></main>
+</div></div>
+<script>
+(() => {
+  const root = document.getElementById('cospace-concept');
+  const main = root.querySelector('#cs-main');
+  const tasks = {
+    review:{tag:'待你验收',title:'任务详情与交接入口',summary:'陈的 Agent 已提交 PR #42，等待验收。',owner:'陈 · 负责 / 林 · 验收',next:'检查交接信息与成果版本；通过后才计入完成。',criteria:'新成员能独立找到任务目标、最新成果与下一步。',evidence:'PR #42 · commit 7c91e2a<br>交接流程演示 · v2',action:'展开验收清单',extra:'待检查：<br>□ 目标与要求完整<br>□ 成果绑定具体版本<br>□ 未决问题有明确跟进人',updated:'陈的 Coding Agent · 20 分钟前提交'},
+    blocked:{tag:'需要你协助',title:'真实项目端到端试跑',summary:'测试账号未就绪，成员邀请与权限验证受阻。',owner:'周 · 执行 / 林 · 协调',next:'林提供两类测试账号，周复测后确认解除阻塞。',criteria:'成员能接手任务、提交成果，由负责人验收。',evidence:'Issue #8 · 缺少测试账号<br>影响 Task #18、Task #21',action:'查看解除条件',extra:'成员和管理员账号均已提供；周确认权限测试通过。提出解决方案后仍需确认恢复。',updated:'周 · 1 小时前确认'},
+    ready:{tag:'你可以开始',title:'整理首轮试用反馈',summary:'三份访谈已就绪，可以开始整理共性问题。',owner:'林 · 执行 / 周 · 验收',next:'阅读访谈，输出问题优先级和对应证据。',criteria:'每个结论附出处，区分已确认问题与待验证假设。',evidence:'试用访谈 · 3 份<br>决策 D-03 · 首版范围',action:'查看交接上下文',extra:'目标：跑完一个真实项目<br>输入：访谈记录 v1<br>决策：首版只做资产索引<br>未决：反馈归类待确认',updated:'林 · 2 小时前更新'}
+  };
+  let state = {page:'team',task:'review',expanded:false};
+  const pages = ['team','mine','project','assets'];
+  function restore(snapshot) {
+    const saved = snapshot?.privateContent;
+    if(saved && pages.includes(saved.page) && Object.hasOwn(tasks,saved.task)) state={page:saved.page,task:saved.task,expanded:!!saved.expanded};
+  }
+  restore(window.openai?.widgetState);
+  function render() {
+    root.querySelectorAll('[data-page]').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.page===state.page)));
+    if(state.page==='assets') {
+      main.innerHTML='<h2>资产中心</h2><p class="small">找到用途、来源与可复用版本</p><div class="resource"><span class="tag">可复用</span><h3>任务交接规范</h3><p>用于成员与 Agent 接手任务时补齐上下文。</p><div class="small">文档 · v2 · 维护人：陈 · 来源：Task #12 验收通过</div></div><div class="resource"><span class="tag">可复用</span><h3>工作台组件库</h3><p>项目列表、任务详情与验收记录的共用组件。</p><div class="small">Git · v0.1.0 · 维护人：陈 · 来源：Task #9 验收通过</div></div><div class="resource"><span class="tag warn">待确认</span><h3>权限测试说明</h3><p>账号方案更新后需要重新核对操作步骤。</p><div class="small">文档 · v1 · 维护人：周 · 关联：Issue #8</div></div>';
+      return;
+    }
+    const task = tasks[state.task];
+    const title = state.page==='mine'?'今天需要我做什么':state.page==='project'?'团队工作台 MVP':'把下一步推进起来';
+    const subtitle = state.page==='project'?'负责人：林 · 当前阶段：试跑准备':'1 项待验收 · 1 项需要协助 · 1 项可以开始';
+    const goal = state.page==='mine'?'':'<div class="goal"><h3>当前目标 · 用 CoSpace 跑完一个真实项目</h3><p class="small">成功标准：成员独立接手任务，提交成果并完成验收。<br>目标成效：待验证</p></div>';
+    const list = Object.entries(tasks).map(([key,item])=>`<button type="button" class="task" data-task="${key}" aria-pressed="${state.task===key}"><span class="tag ${key==='blocked'?'warn':''}">${item.tag}</span><strong>${item.title}</strong><span class="small">${item.summary}</span></button>`).join('');
+    const project = state.page==='mine'?'':'<div class="project"><div class="row"><h3>CoSpace 内部试用</h3><span class="tag warn">有风险</span></div><div class="track" role="progressbar" aria-label="任务验收比例" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"><div class="fill"></div></div><div class="row small"><span>6 / 12 项任务已验收</span><span>林 · 1 小时前确认</span></div><p class="small" style="margin-top:9px">测试账号未就绪，可能影响试跑。</p></div>';
+    const activity = state.page==='project'?'<div class="project"><h3>最近更新与决策</h3><p>陈的 Agent 提交 PR #42 → 待林验收</p><p class="small">20 分钟前 · Task #17</p><p style="margin-top:12px">林确认：首版资产采用外部链接索引</p><p class="small">2 小时前 · 决策 D-03</p></div>':'';
+    main.innerHTML=`<h2>${title}</h2><p class="small">${subtitle}</p>${goal}<div class="columns"><section aria-label="行动队列"><h3>${state.page==='project'?'需要推进的事项':'需要你行动'}</h3>${list}${project}${activity}</section><aside aria-label="任务详情"><span class="tag">${task.tag}</span><h3>${task.title}</h3><div class="field"><div class="label">责任人</div>${task.owner}</div><div class="field"><div class="label">下一步</div>${task.next}</div><div class="field"><div class="label">验收标准</div>${task.criteria}</div><div class="field"><div class="label">关联证据</div>${task.evidence}</div><button type="button" class="action" data-expand aria-expanded="${state.expanded}">${state.expanded?'收起详情':task.action}</button>${state.expanded?`<div class="note" aria-live="polite">${task.extra}</div>`:''}<div class="project small">${task.updated}<br>来源：任务记录</div></aside></div>`;
+  }
+  root.addEventListener('click',event=>{
+    const pageButton=event.target.closest('[data-page]');
+    const taskButton=event.target.closest('[data-task]');
+    const expandButton=event.target.closest('[data-expand]');
+    if(pageButton){state.page=pageButton.dataset.page;state.expanded=false;}
+    else if(taskButton){state.task=taskButton.dataset.task;state.expanded=false;}
+    else if(expandButton){state.expanded=!state.expanded;}
+    else return;
+    render();
+    window.openai?.setWidgetState?.({modelContent:{concept:'CoSpace',page:state.page,task:tasks[state.task].title},privateContent:state})?.catch(()=>{});
+    if(taskButton || expandButton)main.querySelector('[data-expand]')?.focus();
+  });
+  window.addEventListener('openai:set_globals',event=>{if(event.detail?.globals?.widgetState){restore(event.detail.globals.widgetState);render();}});
+  render();
+})();
+</script>
+</div>
