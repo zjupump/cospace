@@ -20,4 +20,16 @@ HTTP 和浏览器测试使用 `.data/qa`，没有修改默认 `.data/cospace`。
 
 ## 尚未验证的范围
 
-独立 PostgreSQL、Supabase 身份服务、远程部署、真实 Git/文档连接和 Agent/MCP 尚未接入。当前通过本地 PostgreSQL 引擎完成业务和持久化验证，不代表完成了线上部署或生产验收。
+独立 PostgreSQL、Supabase 身份服务、远程部署、真实 Git/文档连接、内置 Agent 执行环境尚未验证。外部 Agent 与本机 MCP 接入已在下述增补验证中覆盖。当前通过本地 PostgreSQL 引擎完成业务和持久化验证，不代表完成了线上部署或生产验收。
+
+## Agent 第一版增补验证（2026-11-12）
+
+- TypeScript 类型检查和 Webpack 生产构建通过。
+- 21 项集成测试（原有 12 项 + Agent 9 项）：单任务隔离、仅授权负责人自己的 Agent、凭证摘要和敏感字段隔离、过期与撤销、阻塞需人工解除、重复和并发提交、退回重提、单一活动运行、过期后接手、人工接手和 schema 重复应用。
+- `node scripts/agent-smoke.mjs http://127.0.0.1:3100` 通过：官方 SDK 客户端启动本机 stdio MCP，完成初始化、发现和调用六个工具、进展日志、阻塞解决、两轮提交、人工验收、来源归属及撤销后拒绝访问。
+- 原有 `scripts/smoke.mjs` HTTP 回归流程通过。
+- 浏览器检查负责人登录、任务创建、Agent 授权入口和展开后的表单；页面预览保存在 `design/agent-preview.jpg`。实际授权及成果回传通过上述真实 HTTP/MCP 流程验证。
+- HTTP/MCP 和页面验证使用独立 `.work/agent-smoke-data`，没有修改默认 `.data/cospace`。
+- 安装依赖时检查了安全报告，当前报告的 3 项问题均来自已有的 Vitest 开发测试依赖链，未自动进行跨大版本升级；MCP 新增依赖未被该报告列为漏洞来源。
+
+尚未对特定第三方 Agent 客户端的配置界面逐一兼容验证，也未运行付费模型生成真实业务成果。测试中的成果链接明确标记为验证占位地址。

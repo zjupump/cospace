@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import type { Activity, Asset, Goal, Issue, Member, Project, Submission, Task, Workspace } from "../lib/types";
+import type { Activity, Agent, AgentGrant, AgentRun, AgentRunLog, Asset, Goal, Issue, Member, Project, Submission, Task, Workspace } from "../lib/types";
 import type { Database } from "./database";
 import { ensure } from "./errors";
 
@@ -48,11 +48,10 @@ async function verifyMembers(database: Database, user: Member, ids: string[]) {
   ensure(new Set(ids).size === members.length, 400, "请选择当前团队的成员");
 }
 
-async function event(database: Database, user: Member, projectId: string, taskId: string | null, message: string) {
-  await database.query("INSERT INTO events (id,project_id,task_id,actor_id,message,created_at) VALUES ($1,$2,$3,$4,$5,$6)", [randomUUID(), projectId, taskId, user.id, message, new Date().toISOString()]);
-}
-
-export function createService(database: Database) {
+export function createService(database: Database, agent?: { id: string; name: string; run_id: string }) {
+  async function event(transaction: Database, user: Member, projectId: string, taskId: string | null, message: string) {
+    await transaction.query("INSERT INTO events (id,project_id,task_id,actor_id,message,created_at,agent_id,agent_run_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)", [randomUUID(), projectId, taskId, user.id, agent ? `Agent「${agent.name}」代为${message}` : message, new Date().toISOString(), agent?.id || null, agent?.run_id || null]);
+  }
   async function changeTask<T>(user: Member, id: string, version: number, operation: (transaction: Database, task: Task) => Promise<T>) {
     return database.transaction(async (transaction) => {
       const task = await taskFor(transaction, user, id, true);
@@ -81,7 +80,13 @@ export function createService(database: Database) {
         database.query<Asset>("SELECT assets.* FROM assets JOIN projects ON projects.id=assets.project_id WHERE projects.workspace_id=$1 ORDER BY assets.created_at DESC", workspaceId),
         database.query<Activity>("SELECT events.* FROM events JOIN projects ON projects.id=events.project_id WHERE projects.workspace_id=$1 ORDER BY events.created_at DESC LIMIT 100", workspaceId),
       ]);
-      return { user, members, goals, projects, tasks, submissions, issues, assets, events };
+      const [agents, agent_grants, agent_runs, agent_run_logs] = await Promise.all([
+        database.query<Agent>("SELECT agents.* FROM agents JOIN members ON members.id=agents.owner_id WHERE members.workspace_id=$1 ORDER BY agents.created_at DESC", workspaceId),
+        database.query<AgentGrant>("SELECT g.id,g.agent_id,g.task_id,g.granted_by,g.expires_at,g.revoked_at,g.last_used_at,g.created_at FROM agent_grants g JOIN tasks t ON t.id=g.task_id JOIN projects p ON p.id=t.project_id WHERE p.workspace_id=$1 ORDER BY g.created_at DESC", workspaceId),
+        database.query<AgentRun>("SELECT r.* FROM agent_runs r JOIN tasks t ON t.id=r.task_id JOIN projects p ON p.id=t.project_id WHERE p.workspace_id=$1 ORDER BY r.started_at DESC", workspaceId),
+        database.query<AgentRunLog>("SELECT l.* FROM agent_run_logs l JOIN agent_runs r ON r.id=l.run_id JOIN tasks t ON t.id=r.task_id JOIN projects p ON p.id=t.project_id WHERE p.workspace_id=$1 ORDER BY l.created_at DESC LIMIT 500", workspaceId),
+      ]);
+      return { user, members, goals, projects, tasks, submissions, issues, assets, events, agents, agent_grants, agent_runs, agent_run_logs };
     },
 
     async createProject(user: Member, input: unknown) {
@@ -131,6 +136,8 @@ export function createService(database: Database) {
         const revision = (latest?.revision || 0) + 1;
         const submissionId = randomUUID();
         await transaction.query("INSERT INTO submissions (id,task_id,revision,author_id,url,artifact_version,summary,result,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'pending',$8)", [submissionId, id, revision, user.id, data.url, data.artifact_version, data.summary, new Date().toISOString()]);
+        if (agent) await transaction.query("UPDATE submissions SET agent_id=$2,agent_run_id=$3 WHERE id=$1", [submissionId, agent.id, agent.run_id]);
+        else await transaction.query("UPDATE agent_runs SET status='stopped',updated_at=$2 WHERE task_id=$1 AND status IN ('running','blocked')", [id, new Date().toISOString()]);
         await transaction.query("UPDATE tasks SET status='in_review' WHERE id=$1", [id]);
         await event(transaction, user, task.project_id, id, `提交了第 ${revision} 版成果，等待验收`);
         return { id: submissionId, revision };

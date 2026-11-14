@@ -4,6 +4,8 @@ import { getDatabase } from "../../../server/database";
 import { authenticate, login, logout, sessionCookie, sessionSeconds } from "../../../server/auth";
 import { AppError, ensure } from "../../../server/errors";
 import { createService } from "../../../server/service";
+import { createAgentService } from "../../../server/agents";
+import { join } from "node:path";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,6 +51,13 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
       if (path.length === 3 && path[0] === "tasks" && path[2] === "context") return response(await service.context(user, path[1]));
     }
     if (request.method === "POST") {
+      const agents = createAgentService(database);
+      if (route === "agents") return response(await agents.register(user, input), 201);
+      if (path.length === 3 && path[0] === "tasks" && path[2] === "agent-grants") {
+        const grant = await agents.grant(user, path[1], input);
+        return response({ ...grant, mcp_config: { mcpServers: { cospace: { command: "node", args: [join(process.cwd(), "scripts", "agent-mcp.mjs")], env: { COSPACE_URL: request.nextUrl.origin, COSPACE_AGENT_TOKEN: grant.token } } } } }, 201);
+      }
+      if (path.length === 3 && path[0] === "agent-grants" && path[2] === "revoke") return response(await agents.revoke(user, path[1]));
       if (route === "projects") return response(await service.createProject(user, input), 201);
       if (route === "tasks") return response(await service.createTask(user, input), 201);
       if (path.length === 3 && path[0] === "tasks") {

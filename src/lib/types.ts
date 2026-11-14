@@ -45,6 +45,8 @@ export type Submission = {
   task_id: string;
   revision: number;
   author_id: string;
+  agent_id?: string | null;
+  agent_run_id?: string | null;
   url: string;
   artifact_version: string;
   summary: string;
@@ -99,7 +101,23 @@ export type Workspace = {
   issues: Issue[];
   assets: Asset[];
   events: Activity[];
+  agents: Agent[];
+  agent_grants: AgentGrant[];
+  agent_runs: AgentRun[];
+  agent_run_logs: AgentRunLog[];
 };
+
+export type Agent = { id: string; owner_id: string; name: string; created_at: string };
+export type AgentGrant = {
+  id: string; agent_id: string; task_id: string; granted_by: string;
+  expires_at: string; revoked_at: string | null; last_used_at: string | null; created_at: string;
+};
+export type AgentRun = {
+  id: string; grant_id: string; agent_id: string; task_id: string;
+  status: "running" | "blocked" | "submitted" | "stopped";
+  submission_id: string | null; started_at: string; updated_at: string;
+};
+export type AgentRunLog = { id: string; run_id: string; message: string; created_at: string };
 
 export const statusLabels: Record<TaskStatus, string> = {
   todo: "待开始",

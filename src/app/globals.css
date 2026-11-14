@@ -288,3 +288,22 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 18px; min-width
 @media (pointer: coarse) { .button, .nav-item, .icon-button, .text-button, .filter-tabs button, .sidebar-icon { min-height: 44px; } input, select, textarea { font-size: 16px; } }
 @media (max-width: 760px) { .mobile-logout { display: inline-flex; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+.agent-panel { grid-column: 1 / -1; }
+.agent-panel > p { line-height: 1.8; }
+.agent-connect, .agent-run { margin-top: 12px; border: 1px solid #e7e1ef; border-radius: 8px; padding: 12px; }
+.agent-panel summary { cursor: pointer; font-size: 12px; line-height: 1.7; color: #716486; overflow-wrap: anywhere; }
+.agent-connect summary svg { vertical-align: middle; margin-right: 6px; }
+.agent-form { display: grid; gap: 12px; margin-top: 14px; }
+.agent-form label { display: grid; gap: 6px; font-size: 11px; }
+.agent-form input, .agent-form select { min-width: 0; width: 100%; }
+.agent-form .form-hint svg { vertical-align: middle; }
+.agent-credentials { border: 1px solid #bfb0d7; background: #f8f5fc; padding: 12px; border-radius: 8px; margin-top: 12px; }
+.agent-credentials strong, .agent-grant strong { font-size: 12px; overflow-wrap: anywhere; }
+.agent-credentials textarea { width: 100%; margin-top: 10px; font-family: monospace; font-size: 11px; resize: vertical; }
+.agent-credentials p { margin-top: 8px; line-height: 1.8; }
+.agent-grant { border-bottom: 1px solid #eeebf3; padding: 12px 0; }
+.agent-grant > span { margin-left: 9px; color: #8a7aa6; }
+.agent-grant p, .agent-run > p { margin-top: 7px; line-height: 1.8; }
+.agent-panel h4 { font-size: 12px; margin-top: 16px; }
+.agent-log { font-size: 11px; border-left: 2px solid #d4c8e6; padding-left: 9px; margin-top: 10px; overflow-wrap: anywhere; }
+.agent-log span { display: block; color: #9990a4; font-size: 10px; margin-bottom: 4px; }

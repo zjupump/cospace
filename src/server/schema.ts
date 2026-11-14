@@ -103,4 +103,44 @@ CREATE INDEX IF NOT EXISTS submissions_task ON submissions(task_id);
 CREATE INDEX IF NOT EXISTS issues_task ON issues(task_id);
 CREATE INDEX IF NOT EXISTS events_project ON events(project_id, created_at);
 CREATE INDEX IF NOT EXISTS projects_workspace ON projects(workspace_id);
+CREATE TABLE IF NOT EXISTS agents (
+  id text PRIMARY KEY,
+  owner_id text NOT NULL REFERENCES members(id),
+  name text NOT NULL,
+  created_at text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS agent_grants (
+  id text PRIMARY KEY,
+  agent_id text NOT NULL REFERENCES agents(id),
+  task_id text NOT NULL REFERENCES tasks(id),
+  granted_by text NOT NULL REFERENCES members(id),
+  token_hash text NOT NULL UNIQUE,
+  expires_at text NOT NULL,
+  revoked_at text,
+  last_used_at text,
+  created_at text NOT NULL
+);
+CREATE TABLE IF NOT EXISTS agent_runs (
+  id text PRIMARY KEY,
+  grant_id text NOT NULL REFERENCES agent_grants(id),
+  agent_id text NOT NULL REFERENCES agents(id),
+  task_id text NOT NULL REFERENCES tasks(id),
+  status text NOT NULL CHECK (status IN ('running','blocked','submitted','stopped')),
+  submission_id text REFERENCES submissions(id),
+  started_at text NOT NULL,
+  updated_at text NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS one_active_agent_run ON agent_runs(task_id) WHERE status IN ('running','blocked');
+CREATE TABLE IF NOT EXISTS agent_run_logs (
+  id text PRIMARY KEY,
+  run_id text NOT NULL REFERENCES agent_runs(id),
+  message text NOT NULL,
+  created_at text NOT NULL
+);
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS agent_id text REFERENCES agents(id);
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS agent_run_id text REFERENCES agent_runs(id);
+ALTER TABLE events ADD COLUMN IF NOT EXISTS agent_id text REFERENCES agents(id);
+ALTER TABLE events ADD COLUMN IF NOT EXISTS agent_run_id text REFERENCES agent_runs(id);
+CREATE INDEX IF NOT EXISTS agent_grants_task ON agent_grants(task_id);
+CREATE INDEX IF NOT EXISTS agent_runs_task ON agent_runs(task_id);
 `;
